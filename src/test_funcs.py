@@ -399,6 +399,58 @@ This is a **bold** paragraph on a new line
                 "- This is a list\n- with items\n- and a trailing newline"
             ]
         )
+    
+    def test_heading(self):
+        block = "## This is a heading"
+        self.assertEqual(block_to_block_type(block), BlockType.HEADING)
+
+    def test_code(self):
+        block = "```\nprint('Hello, world!')\n```"
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+
+    def test_quote(self):
+        block = "> This is a quote\n> This is another line"
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+
+    def test_unordered_list(self):
+        block = "- Item 1\n- Item 2\n- Item 3"
+        self.assertEqual(block_to_block_type(block), BlockType.ULIST)
+
+    def test_ordered_list(self):
+        block = "1. First item\n2. Second item\n3. Third item"
+        self.assertEqual(block_to_block_type(block), BlockType.LIST)
+
+    def test_ordered_list_invalid(self):
+        block = "1. First item\n3. Third item\n2. Second item"
+        self.assertNotEqual(block_to_block_type(block), BlockType.LIST)
+
+    def test_paragraph(self):
+        block = "This is a normal paragraph."
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_mixed_block(self):
+        block = "This is not a list\n- But this is"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_empty_block(self):
+        block = ""
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_multiline_code(self):
+        block = "```\nline1\nline2\nline3\n```"
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+
+    def test_multiline_quote(self):
+        block = "> Line 1\n> Line 2\n> Line 3"
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+
+    def test_multiline_unordered_list(self):
+        block = "- Item 1\n- Item 2\n- Item 3"
+        self.assertEqual(block_to_block_type(block), BlockType.ULIST)
+
+    def test_multiline_ordered_list(self):
+        block = "1. Item 1\n2. Item 2\n3. Item 3"
+        self.assertEqual(block_to_block_type(block), BlockType.LIST)
 
 if __name__ == "__main__":
     unittest.main()

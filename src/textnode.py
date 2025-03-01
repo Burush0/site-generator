@@ -9,6 +9,14 @@ class TextType(Enum):
     LINK = "link" # [anchor](url)
     IMAGE = "image" # ![alt](url)
 
+class BlockType(Enum):
+    PARAGRAPH = "paragraph"
+    HEADING = "heading" # 1-6 #
+    CODE = "code" # 3 ` at start and end
+    QUOTE = "quote" # every line starts with >
+    ULIST = "unordered_list" # starts with - followed by a space
+    LIST = "ordered_list" # 1. 2. etc, numbers must increment
+
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
