@@ -268,6 +268,88 @@ class TestFuncs(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
+    def test_text_to_textnodes(self):
+        input = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+        ]
+        self.assertEqual(result, expected)
+    
+    def test_empty_string(self):
+        input = ""
+        result = text_to_textnodes(input)
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_only_text(self):
+        input = "This is just plain text."
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("This is just plain text.", TextType.TEXT),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_only_bold(self):
+        input = "**bold text**"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("bold text", TextType.BOLD),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_only_italic(self):
+        input = "_italic text_"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("italic text", TextType.ITALIC),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_only_code(self):
+        input = "`code block`"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("code block", TextType.CODE),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_only_image(self):
+        input = "![alt text](https://example.com/image.png)"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("alt text", TextType.IMAGE, "https://example.com/image.png"),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_only_link(self):
+        input = "[link text](https://example.com)"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("link text", TextType.LINK, "https://example.com"),
+        ]
+        self.assertEqual(result, expected)
+    
+    def test_mixed_formats_without_spaces(self):
+        input = "**bold**_italic_`code`![image](https://example.com/image.png)[link](https://example.com)"
+        result = text_to_textnodes(input)
+        expected = [
+            TextNode("bold", TextType.BOLD),
+            TextNode("italic", TextType.ITALIC),
+            TextNode("code", TextType.CODE),
+            TextNode("image", TextType.IMAGE, "https://example.com/image.png"),
+            TextNode("link", TextType.LINK, "https://example.com"),
+        ]
+        self.assertEqual(result, expected)
 
 if __name__ == "__main__":
     unittest.main()
