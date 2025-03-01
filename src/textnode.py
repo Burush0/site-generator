@@ -1,5 +1,5 @@
 from enum import Enum
-from leafnode import LeafNode
+from htmlnode import LeafNode
 
 class TextType(Enum):
     TEXT = "normal"
@@ -8,14 +8,6 @@ class TextType(Enum):
     CODE = "code" # `
     LINK = "link" # [anchor](url)
     IMAGE = "image" # ![alt](url)
-
-class BlockType(Enum):
-    PARAGRAPH = "paragraph"
-    HEADING = "heading" # 1-6 #
-    CODE = "code" # 3 ` at start and end
-    QUOTE = "quote" # every line starts with >
-    ULIST = "unordered_list" # starts with - followed by a space
-    LIST = "ordered_list" # 1. 2. etc, numbers must increment
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
@@ -33,3 +25,19 @@ class TextNode:
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
     
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+        case TextType.BOLD:
+            return LeafNode("b", text_node.text)
+        case TextType.ITALIC:
+            return LeafNode("i", text_node.text)
+        case TextType.CODE:
+            return LeafNode("code", text_node.text)
+        case TextType.LINK:
+            return LeafNode("a", text_node.text, {'href': text_node.url})
+        case TextType.IMAGE:
+            return LeafNode("img", "", {'src': text_node.url, 'alt': text_node.text})
+        case _:
+            raise Exception(f"Not a valid text type: {text_node.text_type}")
