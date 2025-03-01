@@ -131,3 +131,14 @@ def text_to_textnodes(text):
                 ), "`", TextType.CODE)
             )
     )
+
+def markdown_to_blocks(markdown):
+    new_blocks = []
+    blocks = markdown.split("\n\n")
+    for block in blocks:
+        block = block.strip()
+        if block == "":
+            continue
+        new_blocks.append(block)
+    return new_blocks
+

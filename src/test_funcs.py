@@ -351,5 +351,54 @@ class TestFuncs(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+    
+    def test_empty_markdown(self):
+        md = ""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(blocks,[])
+    
+    def test_weird_markdown(self):
+        md = """
+This is _italic_ paragraph
+
+
+This is a double newline before this `code` paragraph
+This is a **bold** paragraph on a new line
+
+- This is a list
+- with items
+- and a trailing newline
+
+
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is _italic_ paragraph",
+                "This is a double newline before this `code` paragraph\nThis is a **bold** paragraph on a new line",
+                "- This is a list\n- with items\n- and a trailing newline"
+            ]
+        )
+
 if __name__ == "__main__":
     unittest.main()
