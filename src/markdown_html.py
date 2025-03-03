@@ -65,7 +65,12 @@ def block_to_quote(block):
     lines = block.split("\n")
     new_lines = []
     for line in lines:
-        new_lines.append(line.lstrip(">").strip())
+        if not line.startswith(">"):
+            raise ValueError("invalid quote block")
+        stripped = line.lstrip(">").strip()
+        if stripped == "":
+            continue
+        new_lines.append(stripped)
     content = " ".join(new_lines)
     children = text_to_children(content)
     return ParentNode("blockquote", children)

@@ -1,4 +1,3 @@
-import re
 from enum import Enum
 
 class BlockType(Enum):
@@ -21,37 +20,26 @@ def markdown_to_blocks(markdown):
 
 def block_to_block_type(block):
     lines = block.split("\n")
-    heading_matches = []
-    code_matches = 0
-    quote_matches = []
-    ulist_matches = []
-    list_matches = []
-    for i, line in enumerate(lines):
-        heading_match = re.findall(r"^#{1,6}\s.+$", line)
-        code_matches = 0
-        if lines[0].startswith("```"):
-            code_matches += 1
-        if lines[-1].endswith("```"):
-            code_matches += 1
-        quote_match = re.findall(r"^>.+$", line)
-        ulist_match = re.findall(r"^-\s.+$", line)
-        list_match = re.findall(rf"^{i+1}\.\s", line)
-        if heading_match:
-            heading_matches.append(heading_match)
-        if quote_match:
-            quote_matches.append(quote_match)
-        if ulist_match:
-            ulist_matches.append(ulist_match)
-        if list_match:
-            list_matches.append(list_match)
-    if len(lines) == len(heading_matches):
+
+    if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING
-    if code_matches == 2:
+    if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
         return BlockType.CODE
-    if len(lines) == len(quote_matches):
+    if block.startswith(">"):
+        for line in lines:
+            if not line.startswith(">"):
+                return BlockType.PARAGRAPH
         return BlockType.QUOTE
-    if len(lines) == len(ulist_matches):
+    if block.startswith("- "):
+        for line in lines:
+            if not line.startswith("- "):
+                return BlockType.PARAGRAPH
         return BlockType.ULIST
-    if len(lines) == len(list_matches):
+    if block.startswith("1. "):
+        i = 1
+        for line in lines:
+            if not line.startswith(f"{i}. "):
+                return BlockType.PARAGRAPH
+            i += 1
         return BlockType.OLIST
     return BlockType.PARAGRAPH
