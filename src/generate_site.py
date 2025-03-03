@@ -41,19 +41,14 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as file:
         file.write(template)
     file.close()
-    #with open(from_path) as f:
-    #    src_content = f
-    #print(src_content)
 
-md = """
-# Hello world
-
-Some more markdown because why not
-He he
-
-And some more
-
-## and another heading2
-"""
-
-extract_title(md)
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    lst = os.listdir(dir_path_content)
+    for file in lst:
+        src_filepath = os.path.join(dir_path_content, file)
+        dest_filepath = os.path.join(dest_dir_path, file)
+        if os.path.isfile(src_filepath):
+            dest_filepath = dest_filepath.replace(".md", ".html")
+            generate_page(src_filepath, template_path, dest_filepath)
+        else:
+            generate_pages_recursive(src_filepath, template_path, dest_filepath)
